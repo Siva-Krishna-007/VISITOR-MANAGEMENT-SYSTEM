@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Admin Dashboard</h1>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Today's Visitors</h3>
+                <p id="totalToday" class="stat-number">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Checked In</h3>
+                <p id="checkedIn" class="stat-number">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Checked Out</h3>
+                <p id="checkedOut" class="stat-number">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Hosts</h3>
+                <p id="totalHosts" class="stat-number">0</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('visitors')">Visitors</button>
+            <button class="tab-btn" onclick="showTab('hosts')">Hosts</button>
+            <button class="tab-btn" onclick="showTab('checkout')">Check-Out</button>
+        </div>
+
+        <!-- Visitors Tab -->
+        <div id="visitors" class="tab-content active">
+            <h2>Visitor List</h2>
+            <div class="filters">
+                <select id="statusFilter" onchange="loadVisitors()">
+                    <option value="">All Status</option>
+                    <option value="checked-in">Checked In</option>
+                    <option value="checked-out">Checked Out</option>
+                </select>
+                <input type="date" id="dateFilter" onchange="loadVisitors()">
+                <input type="text" id="visitorSearch" placeholder="Search name, badge, host..." oninput="filterVisitorsClient()">
+            </div>
+            <div id="visitorsList"></div>
+        </div>
+
+        <!-- Hosts Tab -->
+        <div id="hosts" class="tab-content">
+            <h2>Manage Hosts</h2>
+            <button class="btn btn-primary" onclick="showAddHostForm()">+ Add New Host</button>
+
+            <div id="addHostForm" style="display: none; margin-top: 20px;">
+                <h3>Add / Edit Host</h3>
+                <div class="host-form-container">
+                    <div class="host-photo-section">
+                        <h4>Host Photo</h4>
+                        <video id="hostVideo" autoplay style="display:none;"></video>
+                        <canvas id="hostCanvas" style="display:none;"></canvas>
+
+                        <div id="hostPhotoPreviewWrapper">
+                            <img id="hostPhotoPreview" alt="Host Photo" style="display:none; width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px solid #667eea;">
+                        </div>
+
+                        <div class="camera-controls" style="margin-top:10px;">
+                            <button id="hostStartCamera" type="button" class="btn btn-secondary">Start Camera</button>
+                            <button id="hostCaptureBtn" type="button" class="btn btn-success" disabled>📸 Capture</button>
+                            <button id="hostRetakeBtn" type="button" class="btn btn-warning" style="display:none;">🔄 Retake</button>
+                        </div>
+
+                        <div style="margin-top:10px;">
+                            <label style="display:block; margin-bottom:5px;">Or upload image</label>
+                            <input type="file" id="hostFileInput" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="host-form-fields">
+                        <form id="hostForm">
+                            <input type="hidden" id="hostId">
+
+                            <div class="form-group">
+                                <input type="text" id="hostName" placeholder="Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="hostEmail" placeholder="Email" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="hostPhone" placeholder="Phone" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="hostDept" placeholder="Department" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">Save Host</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideAddHostForm()">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div id="hostsList" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Check-Out Tab -->
+        <div id="checkout" class="tab-content">
+            <h2>Visitor Check-Out</h2>
+
+            <div class="checkout-form">
+                <input type="text" id="badgeNumber" placeholder="Enter Badge Number or scan QR">
+                <button class="btn btn-primary" onclick="checkoutVisitor()">Check-Out</button>
+            </div>
+
+            <div style="margin-top:20px;">
+                <h3>Scan QR Code</h3>
+                <p style="font-size:0.9em;color:#555;">
+                    Allow camera access and point the visitor badge QR to the camera. The badge number will auto-fill.
+                </p>
+                <!-- QR scanner container -->
+                <div id="qr-reader" style="width: 320px; max-width:100%;"></div>
+                <div id="qr-reader-results" style="margin-top:10px;font-size:0.9em;color:#333;"></div>
+            </div>
+
+            <div id="checkoutResult" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <!-- Html5-qrcode library (from CDN) -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
